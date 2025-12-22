@@ -1,5 +1,7 @@
 # src/visualization/dashboard.py
-
+def main():
+    import streamlit as st
+    
 import time
 import numpy as np
 import pandas as pd
@@ -240,3 +242,6 @@ st.markdown(
     "Built by **Mohd Hamid Akhtar Khan**  \n"
     "Monte Carlo Simulation • Variance Reduction • Statistical Inference"
 )
+
+if __name__ == "__main__":
+    main()
