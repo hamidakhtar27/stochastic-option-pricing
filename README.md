@@ -1,73 +1,71 @@
+[![Streamlit App](https://img.shields.io/badge/Live%20App-Streamlit-brightgreen)](https://stochastic-option-pricing-2k9vfkotvksv2mqcj3tw6e.streamlit.app/)
+
+
 # 📈 Stochastic Simulation & Option Pricing Framework
 
-An **industry-grade quantitative finance project** implementing Monte Carlo option pricing, variance reduction techniques, statistical confidence analysis, and an interactive Streamlit dashboard.
+An industry-grade quantitative finance project implementing Monte Carlo–based option pricing with variance reduction techniques and an interactive Streamlit dashboard.
 
-🔗 **Live Dashboard**:  
-https://stochastic-option-pricing-9ejr99bhhr9chguyngsnrr.streamlit.app/
+🔗 **Live Demo**:  
+👉 https://stochastic-option-pricing-2k9vfkotvksv2mqcj3tw6e.streamlit.app/
 
 ---
 
 ## 🚀 Features
 
-- **Black–Scholes analytical pricing**
-- **Monte Carlo simulation** for European options
-- **Variance reduction techniques**
-  - Antithetic variates
-  - Control variates
-- **Statistical confidence intervals (95%)**
-- **Estimator efficiency comparison**
-- **Sensitivity analysis (volatility × maturity heatmaps)**
-- **Interactive Streamlit dashboard**
+- Monte Carlo simulation for European option pricing
+- Black–Scholes analytical benchmark
+- Variance reduction techniques:
+  - Antithetic Variates
+  - Control Variates
+- Statistical confidence intervals
+- Convergence and efficiency analysis
+- Sensitivity analysis with respect to key parameters
+- Interactive Streamlit dashboard
 
 ---
 
-## 🧠 Quantitative Concepts Demonstrated
+## 🧠 Methods & Concepts
 
-- Stochastic differential equations (GBM)
-- Risk-neutral valuation
-- Monte Carlo convergence analysis
-- Variance reduction efficiency
-- Confidence interval estimation
-- Bias–variance tradeoff
+- Stochastic processes (Geometric Brownian Motion)
+- Risk-neutral pricing
+- Law of Large Numbers & Central Limit Theorem
+- Variance reduction for estimator efficiency
+- Numerical stability and performance considerations
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠 Tech Stack
 
-- **Python**
-- NumPy, SciPy
-- Matplotlib
-- Pandas
-- Streamlit
-- PyTest (unit testing)
+- **Language**: Python  
+- **Libraries**: NumPy, SciPy, Matplotlib, Streamlit  
+- **Deployment**: Streamlit Community Cloud
 
 ---
 
 ## 📊 Dashboard Preview
 
-The dashboard allows real-time experimentation with:
-- Initial price
-- Strike
-- Volatility
-- Risk-free rate
-- Time to maturity
-- Monte Carlo paths
-- Pricing methodology
+The dashboard allows users to:
+- Adjust option parameters in real time
+- Compare Monte Carlo vs Black–Scholes prices
+- Observe convergence behavior as simulations increase
+- Analyze estimator efficiency and uncertainty
 
 ---
 
-## 📂 Project Structure
+## 🎯 Why this project matters
 
-```text
-stochastic-option-pricing/
-│
-├── src/
-│   ├── models/          # Black-Scholes, GBM
-│   ├── monte_carlo/     # Simulators
-│   ├── analytics/       # CI, convergence, efficiency
-│   └── visualization/  # Streamlit dashboard
-│
-├── tests/               # Unit tests
-├── app.py               # Streamlit entry point
-├── requirements.txt
-└── README.md
+This project mirrors real-world quantitative finance workflows used in:
+- Derivatives pricing teams
+- Risk & model validation roles
+- Quant research and trading internships
+
+It demonstrates strong foundations in **probability, statistics, numerical methods, and financial engineering**, along with practical deployment skills.
+
+---
+
+## 📌 Author
+
+**Mohd Hamid Akhtar Khan**  
+B.Tech CSE | Quantitative Finance Enthusiast  
+GitHub: https://github.com/hamidakhtar27
+
