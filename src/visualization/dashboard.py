@@ -16,7 +16,7 @@ from src.analytics.confidence_intervals import confidence_interval
 
 
 # ==================================================
-# Cached Monte Carlo runner (hashable inputs only)
+# Cached Monte Carlo runner (HASHABLE inputs only)
 # ==================================================
 @st.cache_data(show_spinner=False)
 def run_pricing(method, S0, K, r, sigma, T, n_paths, runs):
@@ -35,11 +35,11 @@ def run_pricing(method, S0, K, r, sigma, T, n_paths, runs):
 
 
 # ==================================================
-# MAIN STREAMLIT APP
+# MAIN APP
 # ==================================================
 def main():
     # --------------------------------------------------
-    # Page config (MUST be first Streamlit call)
+    # Page config (FIRST Streamlit call)
     # --------------------------------------------------
     st.set_page_config(
         page_title="Stochastic Option Pricing Dashboard",
@@ -56,7 +56,7 @@ def main():
     )
 
     # --------------------------------------------------
-    # Sidebar controls
+    # Sidebar
     # --------------------------------------------------
     st.sidebar.header("Option Parameters")
 
@@ -94,7 +94,7 @@ def main():
     )
 
     # ==================================================
-    # TAB 1 — Pricing, Comparison & Distribution
+    # TAB 1 — Pricing + Distribution (GRAPH GUARANTEED)
     # ==================================================
     with tab1:
         st.subheader("Pricing Results")
@@ -125,24 +125,27 @@ def main():
             use_container_width=True
         )
 
-        # --------- DISTRIBUTION PLOT (RESTORED PROPERLY) ---------
+        # -------- FORCED, ISOLATED GRAPH RENDER --------
         st.markdown("### Monte Carlo Price Distribution")
 
-        dist_samples = run_pricing(method, S0, K, r, sigma, T, n_paths, 30)
-        mean, lo, hi = confidence_interval(dist_samples)
+        with st.container():
+            dist_samples = run_pricing(
+                method, S0, K, r, sigma, T, n_paths, 30
+            )
+            mean, lo, hi = confidence_interval(dist_samples)
 
-        fig, ax = plt.subplots()
-        ax.hist(dist_samples, bins=20, alpha=0.7)
-        ax.axvline(bs_price, linestyle="--", label="Black–Scholes")
-        ax.axvline(lo, linestyle=":", label="95% CI Lower")
-        ax.axvline(hi, linestyle=":", label="95% CI Upper")
+            fig, ax = plt.subplots(figsize=(8, 4))
+            ax.hist(dist_samples, bins=20, alpha=0.75, edgecolor="black")
+            ax.axvline(bs_price, linestyle="--", linewidth=2, label="Black–Scholes")
+            ax.axvline(lo, linestyle=":", linewidth=2, label="95% CI Lower")
+            ax.axvline(hi, linestyle=":", linewidth=2, label="95% CI Upper")
 
-        ax.set_xlabel("Option Price")
-        ax.set_ylabel("Frequency")
-        ax.set_title("Monte Carlo Estimator Distribution")
-        ax.legend()
+            ax.set_xlabel("Option Price")
+            ax.set_ylabel("Frequency")
+            ax.set_title("Monte Carlo Estimator Distribution")
+            ax.legend()
 
-        st.pyplot(fig)
+            st.pyplot(fig, clear_figure=True)
 
     # ==================================================
     # TAB 2 — Efficiency
@@ -179,6 +182,7 @@ def main():
 
         vol_grid = np.linspace(0.1, 0.5, 6)
         T_grid = np.linspace(0.25, 2.0, 6)
+
         heatmap = np.zeros((len(T_grid), len(vol_grid)))
 
         for i, t in enumerate(T_grid):
