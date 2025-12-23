@@ -16,7 +16,7 @@ from src.analytics.confidence_intervals import confidence_interval
 
 
 # ==================================================
-# Cached pricing runner (HASHABLE METHOD KEY)
+# Cached Monte Carlo runner (hashable inputs only)
 # ==================================================
 @st.cache_data(show_spinner=False)
 def run_pricing(method, S0, K, r, sigma, T, n_paths, runs):
@@ -94,7 +94,7 @@ def main():
     )
 
     # ==================================================
-    # TAB 1 — Pricing & Comparison
+    # TAB 1 — Pricing, Comparison & Distribution
     # ==================================================
     with tab1:
         st.subheader("Pricing Results")
@@ -102,6 +102,8 @@ def main():
         col1, col2 = st.columns(2)
         col1.metric(f"{method} Price", f"{price:.4f}")
         col2.metric("Black–Scholes Price", f"{bs_price:.4f}")
+
+        st.markdown("### Method Comparison")
 
         rows = []
         for name in pricing_funcs.keys():
@@ -118,7 +120,29 @@ def main():
                 "Time (ms)": round(elapsed, 1),
             })
 
-        st.dataframe(pd.DataFrame(rows).set_index("Method"), use_container_width=True)
+        st.dataframe(
+            pd.DataFrame(rows).set_index("Method"),
+            use_container_width=True
+        )
+
+        # --------- DISTRIBUTION PLOT (RESTORED PROPERLY) ---------
+        st.markdown("### Monte Carlo Price Distribution")
+
+        dist_samples = run_pricing(method, S0, K, r, sigma, T, n_paths, 30)
+        mean, lo, hi = confidence_interval(dist_samples)
+
+        fig, ax = plt.subplots()
+        ax.hist(dist_samples, bins=20, alpha=0.7)
+        ax.axvline(bs_price, linestyle="--", label="Black–Scholes")
+        ax.axvline(lo, linestyle=":", label="95% CI Lower")
+        ax.axvline(hi, linestyle=":", label="95% CI Upper")
+
+        ax.set_xlabel("Option Price")
+        ax.set_ylabel("Frequency")
+        ax.set_title("Monte Carlo Estimator Distribution")
+        ax.legend()
+
+        st.pyplot(fig)
 
     # ==================================================
     # TAB 2 — Efficiency
@@ -155,7 +179,6 @@ def main():
 
         vol_grid = np.linspace(0.1, 0.5, 6)
         T_grid = np.linspace(0.25, 2.0, 6)
-
         heatmap = np.zeros((len(T_grid), len(vol_grid)))
 
         for i, t in enumerate(T_grid):
