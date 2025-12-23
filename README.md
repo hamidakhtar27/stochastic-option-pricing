@@ -70,28 +70,6 @@ The result is a practical, end-to-end quantitative system rather than a theoreti
 
 ---
 
-## Project Structure
-
-stochastic-option-pricing/
-├── app.py # Streamlit entry point
-├── requirements.txt
-├── README.md
-│
-├── src/
-│ ├── models/
-│ │ └── black_scholes.py # Black–Scholes analytical pricing
-│ ├── monte_carlo/
-│ │ └── simulator.py # Monte Carlo & variance reduction methods
-│ ├── analytics/
-│ │ └── confidence_intervals.py
-│ └── visualization/
-│ └── dashboard.py # Streamlit dashboard
-│
-├── notebooks/ # Exploratory analysis & validation
-└── tests/ # Unit tests (extendable)
-
----
-
 ## Author
 
 **Mohd Hamid Akhtar Khan**  
