@@ -1,8 +1,5 @@
-import sys
-import os
-
-sys.path.append(os.path.abspath("."))
-
+import streamlit as st
 from src.visualization.dashboard import main
 
-main()
+if __name__ == "__main__":
+    main()
