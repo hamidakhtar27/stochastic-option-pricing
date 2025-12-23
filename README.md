@@ -87,7 +87,7 @@ stochastic-option-pricing/
 │ └── visualization/
 │ └── dashboard.py # Streamlit dashboard
 │
-├── notebooks/ # Exploratory analysis and validation
+├── notebooks/ # Exploratory analysis & validation
 └── tests/ # Unit tests (extendable)
 
 ---
