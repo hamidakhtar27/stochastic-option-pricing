@@ -15,18 +15,32 @@ from src.monte_carlo.simulator import (
 from src.analytics.confidence_intervals import confidence_interval
 
 
+# ==================================================
+# Cached pricing runner (HASHABLE METHOD KEY)
+# ==================================================
 @st.cache_data(show_spinner=False)
-def run_pricing(func, S0, K, r, sigma, T, n_paths, runs):
+def run_pricing(method, S0, K, r, sigma, T, n_paths, runs):
+    pricing_funcs = {
+        "Plain Monte Carlo": monte_carlo_european_call,
+        "Antithetic Variates": monte_carlo_european_call_antithetic,
+        "Control Variate": monte_carlo_european_call_control_variate,
+    }
+
+    func = pricing_funcs[method]
+
     return np.array([
         func(S0, K, r, sigma, T, n_paths, seed=i)
         for i in range(runs)
     ])
 
 
+# ==================================================
+# MAIN STREAMLIT APP
+# ==================================================
 def main():
-    # ==================================================
-    # Page config (MUST BE FIRST)
-    # ==================================================
+    # --------------------------------------------------
+    # Page config (MUST be first Streamlit call)
+    # --------------------------------------------------
     st.set_page_config(
         page_title="Stochastic Option Pricing Dashboard",
         layout="wide"
@@ -36,14 +50,14 @@ def main():
     st.markdown(
         """
         Industry-grade quantitative dashboard for Monte Carlo option pricing,
-        variance reduction, statistical confidence intervals, efficiency analysis,
-        and sensitivity visualization.
+        variance reduction techniques, statistical confidence intervals,
+        efficiency benchmarking, and sensitivity analysis.
         """
     )
 
-    # ==================================================
+    # --------------------------------------------------
     # Sidebar controls
-    # ==================================================
+    # --------------------------------------------------
     st.sidebar.header("Option Parameters")
 
     S0 = st.sidebar.slider("Initial Price (S₀)", 50.0, 150.0, 100.0)
@@ -69,6 +83,9 @@ def main():
         "Control Variate": monte_carlo_european_call_control_variate,
     }
 
+    # --------------------------------------------------
+    # Pricing
+    # --------------------------------------------------
     price = pricing_funcs[method](S0, K, r, sigma, T, n_paths, seed=42)
     bs_price = european_call_price(S0, K, r, sigma, T)
 
@@ -77,16 +94,19 @@ def main():
     )
 
     # ==================================================
-    # TAB 1
+    # TAB 1 — Pricing & Comparison
     # ==================================================
     with tab1:
-        st.metric(f"{method} Price", f"{price:.4f}")
-        st.metric("Black–Scholes Price", f"{bs_price:.4f}")
+        st.subheader("Pricing Results")
+
+        col1, col2 = st.columns(2)
+        col1.metric(f"{method} Price", f"{price:.4f}")
+        col2.metric("Black–Scholes Price", f"{bs_price:.4f}")
 
         rows = []
-        for name, func in pricing_funcs.items():
+        for name in pricing_funcs.keys():
             start = time.perf_counter()
-            samples = run_pricing(func, S0, K, r, sigma, T, n_paths, 15)
+            samples = run_pricing(name, S0, K, r, sigma, T, n_paths, 15)
             elapsed = (time.perf_counter() - start) * 1000
 
             mean, lo, hi = confidence_interval(samples)
@@ -98,39 +118,44 @@ def main():
                 "Time (ms)": round(elapsed, 1),
             })
 
-        st.dataframe(pd.DataFrame(rows).set_index("Method"))
+        st.dataframe(pd.DataFrame(rows).set_index("Method"), use_container_width=True)
 
     # ==================================================
-    # TAB 2
+    # TAB 2 — Efficiency
     # ==================================================
     with tab2:
-        st.subheader("Efficiency Analysis")
+        st.subheader("Estimator Efficiency (CI Width vs Paths)")
 
         path_grid = [5_000, 10_000, 20_000, 50_000]
         fig, ax = plt.subplots()
 
-        for name, func in pricing_funcs.items():
+        for name in pricing_funcs.keys():
             widths = []
             for n in path_grid:
-                samples = run_pricing(func, S0, K, r, sigma, T, n, 10)
+                samples = run_pricing(name, S0, K, r, sigma, T, n, 10)
                 _, lo, hi = confidence_interval(samples)
                 widths.append(hi - lo)
+
             ax.plot(path_grid, widths, marker="o", label=name)
 
         ax.set_xscale("log")
-        ax.set_xlabel("Number of Paths")
-        ax.set_ylabel("CI Width")
+        ax.set_xlabel("Number of Paths (log scale)")
+        ax.set_ylabel("95% CI Width")
+        ax.set_title("Monte Carlo Efficiency Comparison")
         ax.legend()
+        ax.grid(True)
+
         st.pyplot(fig)
 
     # ==================================================
-    # TAB 3
+    # TAB 3 — Sensitivity
     # ==================================================
     with tab3:
         st.subheader("Volatility × Maturity Sensitivity")
 
         vol_grid = np.linspace(0.1, 0.5, 6)
         T_grid = np.linspace(0.25, 2.0, 6)
+
         heatmap = np.zeros((len(T_grid), len(vol_grid)))
 
         for i, t in enumerate(T_grid):
@@ -140,8 +165,25 @@ def main():
                 )
 
         fig, ax = plt.subplots()
-        im = ax.imshow(heatmap, origin="lower", aspect="auto", cmap="plasma")
-        fig.colorbar(im, ax=ax)
+        im = ax.imshow(
+            heatmap,
+            origin="lower",
+            aspect="auto",
+            cmap="plasma"
+        )
+        fig.colorbar(im, ax=ax, label="Option Price")
+
+        ax.set_xlabel("Volatility (σ)")
+        ax.set_ylabel("Time to Maturity (T)")
+        ax.set_title("Option Price Sensitivity (Control Variate)")
+
         st.pyplot(fig)
 
-
+    # --------------------------------------------------
+    # Footer
+    # --------------------------------------------------
+    st.markdown("---")
+    st.markdown(
+        "Built by **Mohd Hamid Akhtar Khan**  \n"
+        "Monte Carlo Simulation • Variance Reduction • Statistical Inference"
+    )
