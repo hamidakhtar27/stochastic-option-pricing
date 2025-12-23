@@ -90,6 +90,8 @@ stochastic-option-pricing/
 ├── notebooks/ # Exploratory analysis and validation
 └── tests/ # Unit tests (extendable)
 
+---
+
 ## Author
 
 **Mohd Hamid Akhtar Khan**  
@@ -101,6 +103,8 @@ Areas of Interest:
 - Statistical Modeling
 
 GitHub: https://github.com/hamidakhtar27
+
+---
 
 ## Future Work
 
