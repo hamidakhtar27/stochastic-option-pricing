@@ -73,22 +73,6 @@ The result is a practical, end-to-end quantitative system rather than a theoreti
 ## Author
 
 **Mohd Hamid Akhtar Khan**  
-B.Tech Computer Science  
-
-Areas of Interest:
-- Quantitative Finance
-- Monte Carlo Simulation
-- Statistical Modeling
-
-GitHub: https://github.com/hamidakhtar27
-
----
-
-## Future Work
-
-- Greeks estimation using Monte Carlo methods
-- Path-wise simulation and trajectory visualization
-- Quasi–Monte Carlo techniques for variance reduction
-- Extension to stochastic volatility models (e.g., Heston model)
-- Performance optimization using Numba or C++
+Final-year B.Tech (Computer Science & Engineering)  
+Quantitative Finance & Risk Analytics
 
